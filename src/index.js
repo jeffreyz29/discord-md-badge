@@ -24,7 +24,7 @@ client.once(Events.ClientReady, (readyClient) => {
   console.log(`Logged in to Discord as ${readyClient.user.tag}`);
 
   app.get("/", (_req, res) => {
-    res.redirect("https://github.com/gitlimes/discord-md-badge#readme");
+    res.redirect("https://github.com/limesdotpink/discord-md-badge#readme");
   });
 
   app.get("/api/shield/:userID", async (req, res) => {
