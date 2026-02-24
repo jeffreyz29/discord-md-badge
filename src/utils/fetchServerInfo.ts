@@ -3,18 +3,18 @@ import "dotenv/config";
 const regexes = {
   inviteUrl:
     /discord(?:(?:app)?\.com\/invite|\.gg(?:\/invite)?)\/(?<code>[\w-]{2,255})/i, // https://github.com/discordjs/discord.js/blob/e673b3c129f288f9f271e0b991d16dc2901cdc8a/packages/discord.js/src/structures/Invite.js#L21C3-L21C104
-  inviteID: /^[\w-]{2,255}$/
-  };
+  inviteID: /^[\w-]{2,255}$/,
+};
 
 // set up in-memory key-value store for caching
 import Keyv from "keyv";
 const keyv = new Keyv();
 
 // set up proxy
-import { ProxyAgent } from "undici";
+import { ProxyAgent, fetch } from "undici";
 const dispatcher = new ProxyAgent(process.env.PROXY_URL);
 
-export default async function fetchServerInfo(invite) {
+export default async function fetchServerInfo(invite: string) {
   const inviteID = regexes.inviteUrl.exec(invite)?.groups?.code ?? invite;
 
   if (!inviteID || !regexes.inviteID.test(inviteID)) {
@@ -51,7 +51,7 @@ export default async function fetchServerInfo(invite) {
 }
 
 // function that actually "fetches" data in the "HTTP request" sense
-async function _fetchServer(inviteID) {
+async function _fetchServer(inviteID: string) {
   const reconstructedInviteURL = `https://discord.com/api/v10/invites/${inviteID}?with_counts=true&with_expiration=true`;
 
   try {
@@ -63,9 +63,16 @@ async function _fetchServer(inviteID) {
       dispatcher,
     });
 
-    if (!serverFetch.ok) {
-      const server = await serverFetch.json();
+    type serverRes = {
+      message: string;
+      code: string;
+      guild: { name: string };
+      approximate_member_count: number;
+    };
 
+    const server: serverRes = (await serverFetch.json()) as serverRes;
+
+    if (!serverFetch.ok) {
       if (server.message === "Unknown Invite") {
         return {
           name: "Invalid invite",
@@ -78,15 +85,13 @@ async function _fetchServer(inviteID) {
       }
     }
 
-    const server = await serverFetch.json();
-
     if (server.code === inviteID) {
       const info = {
         name: server.guild.name,
-        memberCount: server.approximate_member_count,
+        memberCount: `${server.approximate_member_count}`,
       };
 
-      if (info.memberCount == 1) {
+      if (info.memberCount === "1") {
         info.memberCount += " member";
       } else {
         info.memberCount += " members";

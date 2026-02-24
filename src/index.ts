@@ -8,7 +8,7 @@ const token = process.env.DC_TOKEN;
 
 import { Client, Events, GatewayIntentBits } from "discord.js";
 
-import fetchUserStatus from "./utils/fetchUserStatus.js";
+import fetchUserStatus, { UserInfo } from "./utils/fetchUserStatus.js";
 import fetchServerInfo from "./utils/fetchServerInfo.js";
 import generateShield from "./utils/generateShield.js";
 
@@ -24,14 +24,18 @@ client.once(Events.ClientReady, (readyClient) => {
   console.log(`Logged in to Discord as ${readyClient.user.tag}`);
 
   app.get("/", (_req, res) => {
-    res.redirect("https://github.com/limesdotpink/discord-md-badge#readme");
+    res.redirect("https://github.com/limesdotpink/dcbadge#readme");
   });
 
   app.get("/api/shield/:userID", async (req, res) => {
     const { userID } = req.params;
     const { bot, compact, theme, style, logoColor } = req.query;
 
-    const userInfo = await fetchUserStatus(readyClient, userID, bot);
+    const userInfo: UserInfo = await fetchUserStatus(
+      readyClient,
+      userID,
+      bot === "true",
+    );
 
     if (userInfo.error) {
       return res.status(400).send(userInfo.error);
@@ -40,10 +44,10 @@ client.once(Events.ClientReady, (readyClient) => {
     const shield = await generateShield({
       label: userInfo.username,
       message: userInfo.status,
-      compact,
-      theme,
-      style,
-      logoColor,
+      compact: Boolean(compact).valueOf(),
+      theme: theme as string,
+      style: style as string,
+      logoColor: logoColor as string,
     });
 
     res.setHeader("Content-Type", "image/svg+xml");
@@ -51,7 +55,8 @@ client.once(Events.ClientReady, (readyClient) => {
   });
 
   app.get("/api/server/:invite*", async (req, res) => {
-    const invite = req.params.invite + req.params?.["0"];
+    // @ts-expect-error: invite does exist
+    const invite = req.params.invite + req.params?.[0];
 
     const { compact, theme, style, logoColor } = req.query;
 
@@ -64,10 +69,10 @@ client.once(Events.ClientReady, (readyClient) => {
     const shield = await generateShield({
       label: serverInfo.name,
       message: serverInfo.memberCount,
-      compact,
-      theme,
-      style,
-      logoColor,
+      compact: Boolean(compact).valueOf(),
+      theme: theme as string,
+      style: style as string,
+      logoColor: logoColor as string,
     });
 
     res.setHeader("Content-Type", "image/svg+xml");
@@ -76,7 +81,7 @@ client.once(Events.ClientReady, (readyClient) => {
 
   app.listen(port, () => {
     console.log(
-      `discord-md-badge v2.2.0 listening at http://localhost:${port}`
+      `discord-md-badge v3.0.0 listening at http://localhost:${port}`,
     );
   });
 });

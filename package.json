@@ -1,6 +1,6 @@
 {
-  "name": "discord-md-badge",
-  "version": "2.2.0",
+  "name": "dcbadge",
+  "version": "3.0.0",
   "dependencies": {
     "bufferutil": "^4.0.8",
     "discord.js": "^14.15.2",
@@ -8,14 +8,25 @@
     "express": "^4.22.1",
     "keyv": "^5.2.3",
     "node-fetch-cache": "^5.1.0",
+    "typescript": "^5.9.3",
     "undici": "^7.18.2",
     "utf-8-validate": "^6.0.3"
   },
   "scripts": {
-    "start": "node ./src/index.js"
+    "start": "node dist/src/index.js",
+    "dev": "npx tsx --watch src/index.ts",
+    "build": "tsc",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix"
   },
   "type": "module",
   "devDependencies": {
-    "eslint": "^9.2.0"
+    "@eslint/js": "^9.39.2",
+    "@eslint/json": "^1.0.1",
+    "@types/express": "^5.0.6",
+    "eslint": "^10.0.0",
+    "globals": "^17.3.0",
+    "jiti": "^2.6.1",
+    "typescript-eslint": "^8.56.1"
   }
 }

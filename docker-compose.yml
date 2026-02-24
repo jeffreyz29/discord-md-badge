@@ -1,0 +1,8 @@
+services:
+  dcbadge:
+    #build: .
+    image: ghcr.io/limesdotpink/dcbadge:v3.0.0
+    ports:
+     - '9398:9398'
+    env_file: '.env'
+
