@@ -82,7 +82,7 @@ client.once(Events.ClientReady, (readyClient) => {
 
   app.listen(port, () => {
     console.log(
-      `discord-md-badge v3.0.0 listening at http://localhost:${port}`,
+      `discord-md-badge v3.0.2 listening at http://localhost:${port}`,
     );
   });
 });

@@ -97,9 +97,14 @@ export default async function generateShield(p: {
   shield = shield.replaceAll(username.toUpperCase(), username);
 
   if (p.scale) {
+    const scaleRegex =
+      /<svg.*?width="(?<w>(\d|\.)+?)" height="(?<h>(\d|\.)+?)"/;
+
+    const { w, h } = scaleRegex.exec(shield).groups;
+
     shield = shield.replace(
-      /^<svg/,
-      `<svg style="scale: ${p.scale}; transform-origin: top left;"`,
+      scaleRegex,
+      `<svg xmlns="http://www.w3.org/2000/svg" style="scale: ${p.scale}; transform-origin: top left;" width="${parseFloat(w) * p.scale}" height="${parseFloat(h) * p.scale}"`,
     );
   }
 
