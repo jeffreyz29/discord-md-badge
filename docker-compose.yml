@@ -6,4 +6,11 @@ services:
     ports:
      - '9398:9398'
     env_file: '.env'
+  shields:
+    image: shieldsio/shields:next
+    restart: always
+    environment:
+     - PORT=8080
+    ports:
+     - 8080:41053
 
