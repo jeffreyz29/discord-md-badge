@@ -7,6 +7,7 @@ export default async function generateShield(p: {
   theme?: string;
   logoColor?: string;
   compact?: boolean;
+  scale?: number;
 }) {
   const username = p.label;
   const presence = p.message;
@@ -94,6 +95,14 @@ export default async function generateShield(p: {
   let shield = await shieldFetch.text();
 
   shield = shield.replaceAll(username.toUpperCase(), username);
+
+  if (p.scale) {
+    shield = shield.replace(
+      /^<svg/,
+      `<svg style="scale: ${p.scale}; transform-origin: top left;"`,
+    );
+  }
+
   if (o.style === "for-the-badge") {
     shield = shield
       .replaceAll('font-weight="bold"', "")

@@ -58,7 +58,7 @@ client.once(Events.ClientReady, (readyClient) => {
     // @ts-expect-error: invite does exist
     const invite = req.params.invite + req.params?.[0];
 
-    const { compact, theme, style, logoColor } = req.query;
+    const { compact, theme, style, logoColor, scale } = req.query;
 
     const serverInfo = await fetchServerInfo(invite);
 
@@ -73,6 +73,7 @@ client.once(Events.ClientReady, (readyClient) => {
       theme: theme as string,
       style: style as string,
       logoColor: logoColor as string,
+      scale: Number(scale)
     });
 
     res.setHeader("Content-Type", "image/svg+xml");
